@@ -1,18 +1,22 @@
 import React from "react";
-import { StyleSheet, Text, View, Image } from "react-native";
+import { StyleSheet, Text, View, Image, Animated } from "react-native";
 import { User } from "../utils/types";
 import { SPACING, AVATAR_SIZE } from "../constants";
 
-const Item: React.FC<User> = ({ name, jobTitle, email, image }) => {
+type IProps = User & {
+  scale: Animated.AnimatedInterpolation;
+};
+
+const Item: React.FC<IProps> = ({ name, jobTitle, email, image, scale }) => {
   return (
-    <View style={styles.itemContainer}>
+    <Animated.View style={{ ...styles.itemContainer, transform: [{ scale }] }}>
       <Image style={styles.avatar} source={{ uri: image }} />
       <View>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.jobTitle}>{jobTitle}</Text>
         <Text style={styles.email}>{email}</Text>
       </View>
-    </View>
+    </Animated.View>
   );
 };
 

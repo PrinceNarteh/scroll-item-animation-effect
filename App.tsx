@@ -15,7 +15,7 @@ const { width, height } = Dimensions.get("screen");
 
 import { DATA } from "./data";
 import { User } from "./utils/types";
-import { BG_IMG } from "./constants";
+import { BG_IMG, ITEM_SIZE } from "./constants";
 import Item from "./components/Item";
 
 type AppProps = {
@@ -23,6 +23,8 @@ type AppProps = {
 };
 
 const App: React.FC<AppProps> = () => {
+  const scrollY = React.useRef(new Animated.Value(0)).current;
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <StatusBar hidden />
@@ -33,7 +35,23 @@ const App: React.FC<AppProps> = () => {
       />
       <Animated.FlatList
         data={DATA}
-        renderItem={({ item, index }) => <Item {...item} />}
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        renderItem={({ item, index }) => {
+          const inputRange = [
+            -1,
+            0,
+            ITEM_SIZE * index,
+            ITEM_SIZE * (index + 2),
+          ];
+          const scale = scrollY.interpolate({
+            inputRange,
+            outputRange: [1, 1, 1, 0],
+          });
+          return <Item {...item} scale={scale} />;
+        }}
       />
     </SafeAreaView>
   );
